@@ -32,7 +32,7 @@ class App extends Component {
   onAddAccount(e) {
 
     const axiosPost = axios({
-      url: 'http://localhost:5001/createAccount',
+      url: 'https://lit-plains-59416.herokuapp.com/createAccount',
       method: 'post',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -58,7 +58,7 @@ class App extends Component {
   onChangeElement(key, event) {
 
     const axiosPost = axios({
-      url: 'http://localhost:5001/setRole',
+      url: 'https://lit-plains-59416.herokuapp.com/setRole',
       method: 'post',
       data: {
         subAcc: key,
@@ -93,7 +93,7 @@ class App extends Component {
   onFetchAccounts() {
 
     const axiosPost = axios({
-      url: 'http://localhost:5001/getAccounts',
+      url: 'https://lit-plains-59416.herokuapp.com/getAccounts',
       method: 'post',
       headers: {
         'Access-Control-Allow-Origin': '*',
