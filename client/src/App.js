@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { Grid, Table, Button, Dropdown } from 'semantic-ui-react'
+import { Button, Label, Form, Input, Grid, Table, Dropdown } from 'semantic-ui-react'
 import axios from 'axios';
 import 'semantic-ui-css/semantic.min.css';
 import './css/custom.css';
+
+const SERVER_URL = 'https://lit-plains-59416.herokuapp.com/';
 
 const roleOptions = [
   { text: '0', value: '0' },
@@ -19,9 +21,13 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { subaccounts: [], loaded: false }
+    this.state = { subaccounts: [], loaded: false}
     this.onChangeElement = this.onChangeElement.bind(this);
     this.onAddAccount = this.onAddAccount.bind(this);
+  }
+
+  handleRef = (c) => {
+    this.inputRef = c
   }
 
   componentDidMount() {
@@ -31,8 +37,14 @@ class App extends Component {
 
   onAddAccount(e) {
 
+    e.preventDefault();
+
+
+    console.log(this.inputRef);
+
+  
     const axiosPost = axios({
-      url: 'https://lit-plains-59416.herokuapp.com/createAccount',
+      url: SERVER_URL + 'createAccount',
       method: 'post',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -46,6 +58,13 @@ class App extends Component {
 
         console.log(success);
 
+        //let arr = [];
+
+        //arr = [...this.subaccounts];
+        //arr.push({acc: success.data.subaccount.username, role: success.data.subaccount.role});
+
+        //this.setState({subaccounts : [...arr]});
+
         //TODO : UPDATE UI
 
         console.log("New Sub Account Added : " + success.data.subaccount.username)
@@ -58,7 +77,7 @@ class App extends Component {
   onChangeElement(key, event) {
 
     const axiosPost = axios({
-      url: 'https://lit-plains-59416.herokuapp.com/setRole',
+      url: SERVER_URL + 'setRole',
       method: 'post',
       data: {
         subAcc: key,
@@ -74,15 +93,22 @@ class App extends Component {
     axiosPost.then(
       success => {
 
-        console.log("Role Updated : " + success.data.role)
+        let arr = [];
+        let newArr = [];
 
-        //TODO : UPDATE UI
+        arr = [...this.state.subaccounts];
+        let updatedObj = {acc:success.data.acc, role: success.data.role};
 
+        arr.filter(obj=>{
+          if(obj.acc !== updatedObj.acc){
+            newArr.push({acc: obj.acc, role: obj.role});
+          }else{
+            newArr.push({acc: updatedObj.acc, role: updatedObj.role});
+          }
+          return newArr;
+        });
 
-        //let arr = [];
-        //arr [0] = {acc:success.data.acc, role: success.data.role};
-
-        //this.setState({subaccounts : [... this.subaccounts, arr [0]]})
+        this.setState({subaccounts : [...newArr]})
 
       },
       error => console.log(error)
@@ -93,7 +119,7 @@ class App extends Component {
   onFetchAccounts() {
 
     const axiosPost = axios({
-      url: 'https://lit-plains-59416.herokuapp.com/getAccounts',
+      url: SERVER_URL + 'getAccounts',
       method: 'post',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -148,22 +174,33 @@ class App extends Component {
                     <Table.Cell >{elem.acc}</Table.Cell>
                     <Table.Cell >{elem.role}</Table.Cell>
                     <Table.Cell>
-                      <Dropdown key={elem.acc} selection options={roleOptions}
+                      <Dropdown placeholder="Select Role" key={elem.acc} selection options={roleOptions}
                         onChange={(e) => this.onChangeElement(elem.acc, e)}
                       />
                     </Table.Cell>
                   </Table.Row>)
                 })
                 }
-
-
               </Table.Body>
               <Table.Footer>
+              
                 <Table.Row>
-                  <Table.HeaderCell colSpan='3'>
-                    <Button primary onClick={this.onAddAccount}>Create New Sub-Account</Button>
+                
+                <Table.HeaderCell colSpan="3">
+                <Form onSubmit={this.onAddAccount}>
+                <Label>
+                  <Input placeholder="Sub Account Name" type="text" ref={this.handleRef} />
+                  </Label>
+                  <Label>
+                  <Dropdown placeholder="Select Role"  selection options={roleOptions} />
+                  </Label>
+               
+                    <Button type="submit" primary>Create New Sub-Account</Button>
+                    </Form>
                   </Table.HeaderCell>
+                  
                 </Table.Row>
+              
               </Table.Footer>
             </Table>
 

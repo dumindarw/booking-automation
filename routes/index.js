@@ -12,7 +12,7 @@ router.post('/createAccount', function (req, res) {
         "apiKey": "F12D1A4B243FFCC5"
       },
       "createAccount": [{
-        "username": "1234567",
+        "username": "1987315",
         "password": "raj123344",
         "apiKey": "F12D1A4B243FFCC5",
         "email": "deemind@gmail.com",
